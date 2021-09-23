@@ -9,11 +9,13 @@ let count = 0;
 let starAmount = 1000;
 let cameraZ = 0;
 
+//+++++++++++++++++++++ROPE PARTs++++++++++++++++++++++++++++++++++
 const ropeLength = 27.6;
 const ropeLength2 = 26;
 const ropeLength3 = 16.1;
 const ropeLength4 = 50.3;
 const ropeLength5 = 46;
+const floorLength = 80;
 
 const palm1lenfth = 61;
 const palm2lenfth = 43.4;
@@ -25,6 +27,11 @@ const points4 = [];
 const points5 = [];
 const palmPoints = [];
 const palmPoints2 = [];
+const floorPoint = [];
+
+
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
 
@@ -42,10 +49,20 @@ carLigth.position.set(1238,153);
 carLigth.blendMode = PIXI.BLEND_MODES.SCREEN;
 app.stage.addChild(carLigth);
 
-//app.stage.addChild(maskCar);
+
 
 for (let i = 0; i <8; i++){
     points3.push(new PIXI.Point(i * ropeLength3,0));
+    palmPoints.push(new PIXI.Point(i * palm1lenfth,0));
+    palmPoints2.push(new PIXI.Point(i * palm2lenfth,0));
+    points4.push(new PIXI.Point(i * ropeLength4,0));
+    points5.push(new PIXI.Point(i * ropeLength5,0));
+    points.push(new PIXI.Point(i * ropeLength,0));
+    points2.push(new PIXI.Point(i * ropeLength2,0));
+}
+
+for (let i=0; i < 21; i++){
+    floorPoint.push(new PIXI.Point(i * floorLength,0));
 }
 
 const strip3 = new PIXI.SimpleRope(PIXI.Texture.from('./img/hair3.png'), points3);
@@ -54,11 +71,7 @@ strip3.y = 55;
 strip3.rotation = Math.PI*0.5;
 app.stage.addChild(strip3);
 
-//PALMS---------------
-for (let i = 0; i <8; i++){
-    palmPoints.push(new PIXI.Point(i * palm1lenfth,0));
-    palmPoints2.push(new PIXI.Point(i * palm2lenfth,0));
-}
+
 
 const palm1 = new PIXI.SimpleRope(PIXI.Texture.from('./img/palm1.png'), palmPoints);
 palm1.x = 450;
@@ -72,7 +85,7 @@ palm2.y = 385;
 palm2.rotation = Math.PI*-0.47;
 app.stage.addChild(palm2);
 
-//CAR MSK
+//CAR MASK
 const blurFilter2 = new PIXI.filters.BlurFilter();
 const carFlark = new PIXI.Graphics();
 carFlark.beginFill(0x9DECFE);
@@ -90,12 +103,7 @@ let spriteW = PIXI.Sprite.from('./img/woman.png');
 spriteW.x = 909;
 app.stage.addChild(spriteW);
 
-for (let i = 0; i <8; i++){
-    points4.push(new PIXI.Point(i * ropeLength4,0));
-}
-for (let i = 0; i <8; i++){
-    points5.push(new PIXI.Point(i * ropeLength5,0));
-}
+
 
 //GLASS blick
 let blickGlass = PIXI.Sprite.from('./img/blick_glasses.png');
@@ -133,18 +141,6 @@ blickJacket1.blendMode = PIXI.BLEND_MODES.SCREEN;
 app.stage.addChild(blickJacket1);
 
 
-
-//AD points
-
-for (let i = 0; i <8; i++){
-    points.push(new PIXI.Point(i * ropeLength,0));
-}
-
-for (let i = 0; i <8; i++){
-    points2.push(new PIXI.Point(i * ropeLength2,0));
-}
-//-------------------------------
-
 const strip = new PIXI.SimpleRope(PIXI.Texture.from('./img/hair.png'), points);
 strip.x = 1270;
 strip.y = 13;
@@ -178,54 +174,9 @@ app.stage.addChild(summer);
 
 
 
-
-//app.stage.addChild(spriteH);
-
-const g = new PIXI.Graphics();
-g.x = strip.x;
-g.y = strip.y;
-app.stage.addChild(g);
-
-//Create stars
-
-const starTexture = new PIXI.Texture.from('./img/star.png');
-const stars = [];
 const blurFilter = new PIXI.filters.BlurFilter();
 
 
-
-
-for(let i=0; i<starAmount; i++){
-    const star = {
-        sprite: new PIXI.Sprite(starTexture),
-        z:0,
-        x:0,
-        y:0,
-        dir:Math.random(),
-        scale:Math.random(),
-        blur: Math.random()
-    };
-    star.sprite.anchor.x = 4;
-    star.sprite.anchor.y = 5;
-    star.sprite.alpha = 0.1;
-    randomizeStar(star, true);
-    app.stage.addChild(star.sprite);
-    stars.push(star);
-}
-
-function randomizeStar(star, initial) {
-    const deg = Math.random() * Math.PI * 2;
-    const distance = Math.random() * app.renderer.screen.width;
-    star.sprite.x = Math.cos(deg) * distance+1;
-    star.sprite.y = Math.sin(deg) * distance+1;
-}
-
-  //STARS
-  stars.forEach((item) => {
-    item.sprite.alpha = Math.random()*.7;
-    item.sprite.scale.set(item.scale);
-
-});
 
 //MASK
 let mask = PIXI.Sprite.from('./img/mask_floor.png');
@@ -233,21 +184,97 @@ mask.position.set(267,350);
 app.stage.addChild(mask);
 
 
+//Caustic shader
+
+let maskContainer = PIXI.Sprite.from('./img/background.jpg');
+
+const floor = new PIXI.SimpleRope(PIXI.Texture.from('./img/background.jpg'), floorPoint);
+
+
+const fragWater = `
+
+#define TAU 6.28318530718
+#define MAX_ITER 5
+
+uniform vec3 iResolution;
+uniform float iTime;
+
+
+void main( ) 
+{
+	float time = iTime * .5+23.0;
+    // uv should be the 0-1 uv of texture...
+	vec2 uv = gl_FragCoord.xy * 5.3  / iResolution.xy;
+    
+#ifdef SHOW_TILING
+	vec2 p = mod(uv*TAU*2.0, TAU)-250.0;
+#else
+    vec2 p = mod(uv*TAU, TAU)-250.0;
+#endif
+	vec2 i = vec2(p);
+	float c = 1.0;
+	float inten = .005;
+
+	for (int n = 0; n < MAX_ITER; n++) 
+	{
+		float t = time * (1.0 - (3.5 / float(n+1)));
+		i = p + vec2(cos(t - i.x) + sin(t + i.y), sin(t - i.y) + cos(t + i.x));
+		c += 1.0/length(vec2(p.x / (sin(i.x+t)/inten),p.y / (cos(i.y+t)/inten)));
+	}
+	c /= float(MAX_ITER);
+	c = 1.17-pow(c, 1.4);
+	vec3 colour = vec3(pow(abs(c), 14.0));
+    colour = clamp(colour + vec3(0.0, 0.12, 0.1), 0.0, 3.0);
+    
+
+	#ifdef SHOW_TILING
+	// Flash tile borders...
+	vec2 pixel = 2.0 / iResolution.xy;
+	uv *= 2.0;
+
+	float f = floor(mod(iTime*.5, 2.0)); 	// Flash value.
+	vec2 first = step(pixel, uv) * f;		   	// Rule out first screen pixels and flash.
+	uv  = step(fract(uv), pixel);				// Add one line of pixels per tile.
+	colour = mix(colour, vec3(1.0, 1.0, 0.0), (uv.x + uv.y) * first.x * first.y); // Yellow line
+	
+	#endif
+	gl_FragColor = vec4(colour, 1.0);
+}
+    
+`;
+
+const effectWidth = window.innerWidth;
+const effectHeight = window.innerHeight;
+
+
+var myUniformsWater = {
+    iResolution: [effectWidth, effectHeight],
+    iTime: 0,
+  }
+
+let containerWater = new PIXI.Container();
+let containerFloor = new PIXI.Container();
+
+var causticShader = new PIXI.Filter(undefined, fragWater, myUniformsWater);
+causticShader.blendMode = PIXI.BLEND_MODES.SCREEN;
+var water = new PIXI.Sprite();
+water.width = effectWidth;
+water.height = effectHeight;
+water.filters = [causticShader];
+water.mask = mask;
+containerWater.mask = mask;
+containerFloor.mask = mask;
+floor.y = 275;
+containerFloor.addChild(mask, floor);
+containerWater.addChild(mask, water);
+app.stage.addChild(containerWater);
+app.stage.addChild(containerFloor);
+containerWater.alpha = 0.17;
+
+//+++++++++++++++++++++++++++++++++++++++++++++
 
 
 
-//CIrcle
-
-const circle = new PIXI.Graphics();
-circle.beginFill(0xE520BA);
-circle.drawCircle(470,350,100);
-circle.endFill();
-circle.filters = [blurFilter];
-blurFilter.blur = 2;
-circle.alpha = 0.2;
-circle.blendMode = PIXI.BLEND_MODES.SCREEN;
-circle.mask = mask;
-app.stage.addChild(mask, circle);
 
 
 
@@ -427,7 +454,6 @@ smokeShader.uniforms.smoke1_color_b = [1, 0, 0];
 smokeShader.uniforms.smoke2_color_a =  [1, 1, 0];
 smokeShader.uniforms.smoke2_color_b =  [1, 0.5, 0];
 smokeShader.blendMode = PIXI.BLEND_MODES.ADD;
-smokeShader.alpha = 1; //no reaction 
 var bg = new PIXI.Sprite();
 bg.width = width;
 bg.height = height;
@@ -435,7 +461,7 @@ bg.filters = [smokeShader];
 app.stage.addChild(container);
 container.addChild(bg);
 
-//++++++++++++++++++++++++++++++++++++++++SMOKE++++++++++++++++++++++++++
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
 
@@ -443,6 +469,8 @@ app.ticker.add((delta) => {
     count += 0.1;
 
     smokeShader.uniforms.time += 0.01;
+
+    causticShader.uniforms.iTime += 0.011;
     
 
 
@@ -482,11 +510,13 @@ app.ticker.add((delta) => {
         palmPoints2[i].x = i * palm2lenfth + Math.cos((i * .8) + count) * 0.1;
     }
 
+    
 
-    //MASK FLOOR
-    circle.x += +0.9;
-    circle.y = Math.cos(count);
-
+    for (let i = 1; i < floorPoint.length; i++) {
+        floorPoint[i].y = Math.sin((i * 6.5) + count) * 2.7;
+        floorPoint[i].x = i * floorLength + Math.cos((i * 13.8) + count) * 6.1;
+    }
+    
 
     //+++++++++++++++++++++++++BLICKS++++++++++++++++++++++++++++++
     blickGlass.alpha = Math.sin(count*0.7)*0.7;
@@ -507,48 +537,7 @@ app.ticker.add((delta) => {
     summer.alpha = Math.sin(count*5.3)*.8/Math.sin(delta);
     
     
-    stars.forEach((item, index) => {
-       
-      
-        if(getDirection(item)){
-            item.sprite.y += -(Math.random()* app.renderer.screen.width/1000) * index/1000 ;
-            item.sprite.x += (Math.cos(count))*2.3 - (2 * Math.sin(delta));
-        } else{
-            item.sprite.y += (Math.random() * app.renderer.screen.width/1000) * index/1210 ;
-            item.sprite.x += (Math.cos(count) * 3.3);
-        }
-        
-        
-       
-    });
-    
-
-
 });
 
-function getDirection(item){
-    if(item.dir > 0.5){
-        return false;
-    }else{
-        return true
-    }
-}
 
-
-function renderPoints() {
-    g.clear();
-
-    g.lineStyle(2, 0xffc2c2);
-    g.moveTo(points[0].x, points[0].y);
-
-    for (let i = 1; i < points.length; i++) {
-        g.lineTo(points[i].x, points[i].y);
-    }
-
-    for (let i = 1; i < points.length; i++) {
-        g.beginFill(0xff0022);
-        g.drawCircle(points[i].x, points[i].y, 10);
-        g.endFill();
-    }
-}
 
