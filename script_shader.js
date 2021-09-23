@@ -1,6 +1,6 @@
 let app = new PIXI.Application({
     width: 1600,
-    height: 547
+    height: 
 });
 
 document.body.appendChild(app.view);

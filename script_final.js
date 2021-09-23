@@ -463,10 +463,13 @@ container.addChild(bg);
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-
+let blickDelta = 1;
+let deltaTime = 0;
+let shift = 0.05;
 
 app.ticker.add((delta) => {
     count += 0.1;
+    deltaTime += shift;
 
     smokeShader.uniforms.time += 0.01;
 
@@ -533,11 +536,22 @@ app.ticker.add((delta) => {
     //blurFilter2.blur = Math.sin(count*5.3)*2.9;
 
     //+++++++++++++++++++++++FONTS++++++++++++++++++++++++++++++++++
-    openO.alpha = Math.sin(count*2.3)*1.4/Math.sin(delta);
-    summer.alpha = Math.sin(count*5.3)*.8/Math.sin(delta);
-    
+   
+
+    blickDelta = Math.random()*deltaTime;
+    if (getBlick()){
+        openO.alpha = Math.sin(count*blickDelta);
+        summer.alpha = Math.sin(count*blickDelta* 0.02);
+    } else {
+        openO.alpha = 0;
+        summer.alpha = 0.6;
+    }
     
 });
+
+function getBlick (){
+    return Math.sin(deltaTime) > Math.random();
+}
 
 
 
