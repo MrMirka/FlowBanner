@@ -9,6 +9,8 @@ let count = 0;
 let starAmount = 1000;
 let cameraZ = 0;
 
+let mouseDelta = 1;
+
 //+++++++++++++++++++++ROPE PARTs++++++++++++++++++++++++++++++++++
 const ropeLength = 27.6;
 const ropeLength2 = 26;
@@ -28,12 +30,14 @@ const points5 = [];
 const palmPoints = [];
 const palmPoints2 = [];
 const floorPoint = [];
-
-
-
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+app.renderer.plugins.interaction.on('mousemove', onMove);
 
+
+function onMove (event) {
+    mouseDelta = event.data.global.x/event.data.global.y;
+}
 
 let sprite = PIXI.Sprite.from('./img/background.jpg');
 app.stage.addChild(sprite);
@@ -480,26 +484,26 @@ app.ticker.add((delta) => {
     // make the snake
     for (let i = 3; i < points.length; i++) {
         points[i].y = Math.sin((i * 0.5) + count) * 3.5;
-        points[i].x = i * ropeLength + Math.cos((i * 0.3) + count) * 2.2;
+        points[i].x = i * ropeLength + Math.cos((i * 0.3) + count) * 2.2 ;
     }
 
     for (let i = 3; i < points2.length; i++) {
         points2[i].y = Math.sin((i * 0.5) + count) * 3.5;
-        points2[i].x = i * ropeLength2 + Math.cos((i * 0.3) + count) * 2.2;
+        points2[i].x = i * ropeLength2 + Math.cos((i * 0.3) + count) * 2.2 ;
     }
 
     for (let i = 3; i < points3.length; i++) {
         points3[i].y = Math.sin((i * 0.5) + count) * 2.5;
-        points3[i].x = i * ropeLength3 + Math.cos((i * 0.3) + count) * 1.1;
+        points3[i].x = i * ropeLength3 + Math.cos((i * 0.3) + count) * 1.1 ;
     }
 
     for (let i = 5; i < points4.length; i++) {
         points4[i].y = Math.sin((i * 0.5) + count) * 1.5;
-        points4[i].x = i * ropeLength4 + Math.cos((i * 0.3) + count) * .3;
+        points4[i].x = i * ropeLength4 + Math.cos((i * 0.3) + count) * .3 ;
     }
     for (let i = 5; i < points5.length; i++) {
         points5[i].y = Math.sin((i * 0.5) + count) * 2.2;
-        points5[i].x = i * ropeLength5 + Math.cos((i * 0.3) + count) * .3;
+        points5[i].x = i * ropeLength5 + Math.cos((i * 0.3) + count) * .3 ;
     }
 
     //PALM
@@ -514,14 +518,12 @@ app.ticker.add((delta) => {
     }
 
     
-    /*
+    
     for (let i = 1; i < floorPoint.length; i++) {
         floorPoint[i].y = Math.sin((i * 6.5) + count) * 2.7;
         floorPoint[i].x = i * floorLength + Math.cos((i * 13.8) + count) * 6.1;
     }
-    */
     
-
     //+++++++++++++++++++++++++BLICKS++++++++++++++++++++++++++++++
     blickGlass.alpha = Math.sin(count*0.7)*0.7;
     blickJacket1.alpha = Math.sin(count*0.7)*0.5;
