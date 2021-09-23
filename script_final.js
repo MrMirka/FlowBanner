@@ -514,11 +514,12 @@ app.ticker.add((delta) => {
     }
 
     
-
+    /*
     for (let i = 1; i < floorPoint.length; i++) {
         floorPoint[i].y = Math.sin((i * 6.5) + count) * 2.7;
         floorPoint[i].x = i * floorLength + Math.cos((i * 13.8) + count) * 6.1;
     }
+    */
     
 
     //+++++++++++++++++++++++++BLICKS++++++++++++++++++++++++++++++
@@ -549,6 +550,7 @@ app.ticker.add((delta) => {
     
 });
 
+//Return time delay
 function getBlick (){
     return Math.sin(deltaTime) > Math.random();
 }
